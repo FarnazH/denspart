@@ -23,3 +23,4 @@
 
 
 from denspart.proatomdb import ProAtomRecord, ProAtomDB
+from denspart.interpolator import AtomInterpolator
