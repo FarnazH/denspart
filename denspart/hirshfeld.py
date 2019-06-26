@@ -109,3 +109,47 @@ class Hirshfeld(Stockholder):
             else:
                 raise ValueError("Cannot make {}-th pro-atom!".format(index))
         return expansion
+
+
+class HirshfeldI(Hirshfeld):
+    """Iterative Hirshfeld Partitioning Scheme."""
+
+    name = "hi"
+
+    def __init__(self, coordinates, numbers, pseudo_numbers, dens, grid, proatomdb,
+                 procharges=None, min_dens=1.e-100, threshold=1e-6, maxiters=500):
+        """
+        """
+        super(HirshfeldI, self).__init__(coordinates, numbers, pseudo_numbers, dens, grid,
+                                         proatomdb, procharges, min_dens)
+        self._threshold = threshold
+        self._maxiters = maxiters
+
+    @property
+    def threshold(self):
+        """Convergence threshold for self-consistent optimization of atomic charges."""
+        return self._threshold
+
+    @property
+    def maxiters(self):
+        """Maximum number of self-consistent optimization iterations."""
+        return self._maxiters
+
+    def run(self):
+        """Run the atoms-in-molecule partitioning."""
+        iters = 0
+        change = np.inf
+        # self-consistent optimization
+        while (iters <= self.maxiters) and (change > self.threshold):
+            # assign reference pro-atom charges
+            if iters > 0:
+                self._procharges[:] = self.charges
+            # compute Hirshfeld atoms
+            super(HirshfeldI, self).run()
+            # check convergence
+            if iters > 0:
+                change = np.abs(self.charges - self.procharges).max()
+            iters += 1
+        if iters == self.maxiters and (change > self.threshold):
+            raise ValueError("Maximum number of iterations={0} with threshold={1} has reached! max "
+                             "change in charge={2}".format(self.maxiters, self.threshold, change))

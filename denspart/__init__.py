@@ -22,6 +22,6 @@
 """Density Partitioning Module."""
 
 
-from denspart.hirshfeld import Hirshfeld
+from denspart.hirshfeld import Hirshfeld, HirshfeldI
 from denspart.proatomdb import ProAtomRecord, ProAtomDB
 from denspart.interpolator import AtomInterpolator
