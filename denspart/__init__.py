@@ -20,3 +20,6 @@
 #
 # --
 """Density Partitioning Module."""
+
+
+from denspart.proatomdb import ProAtomRecord, ProAtomDB
